@@ -6,6 +6,7 @@ const IngredientList = props => {
 
   console.log('ingredientList RENDER')
 
+  // const onRemoveItem = (id) => props.onRemoveItem(id)
 
 
 
