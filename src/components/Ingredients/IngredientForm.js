@@ -1,39 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 import Card from '../UI/Card';
 import './IngredientForm.css';
 
 const IngredientForm = React.memo(props => {
-  console.log('IngredientForm RENDER');
-
-  const [enteredTitle, setEnteredTitle] = useState('');
-  const [enteredAmount, setEnteredAmount] = useState('');
-
-
-
-
-
-  const onNameHandler = (event) => {
-    setEnteredTitle(event.target.value)
-  }
-
-  const onAmountHandler = (event) => {
-    setEnteredAmount(event.target.value)
-  }
-
-
   const submitHandler = event => {
     event.preventDefault();
-
-    props.onAddIngredient({ title: enteredTitle, amount: enteredAmount });
+    // ...
   };
-
-
-  useEffect(() => {
-    //...http get from data
-
-  }, [])
-
 
   return (
     <section className="ingredient-form">
@@ -41,11 +15,11 @@ const IngredientForm = React.memo(props => {
         <form onSubmit={submitHandler}>
           <div className="form-control">
             <label htmlFor="title">Name</label>
-            <input type="text" id="title" value={enteredTitle} onChange={onNameHandler} />
+            <input type="text" id="title" />
           </div>
           <div className="form-control">
             <label htmlFor="amount">Amount</label>
-            <input type="number" id="amount" value={enteredAmount} onChange={onAmountHandler} />
+            <input type="number" id="amount" />
           </div>
           <div className="ingredient-form__actions">
             <button type="submit">Add Ingredient</button>
