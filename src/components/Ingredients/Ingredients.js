@@ -3,28 +3,27 @@ import React, { useState } from 'react';
 import IngredientForm from './IngredientForm';
 import Search from './Search';
 
-function Ingredients() {
+const Ingredients = () => {
 
-  const [ingredient, setIngredient] = useState([])
+  const [ingredients, setIngredients] = useState([])
 
+  const onSetIngredients = ({ title, amount }) => {
+    console.log(ingredients)
 
-  const setIngredientHandler = (ingredient) => {
-
-
-    setIngredient((prevItems) => {
-      console.log(prevItems);
-      return (
-        [
-          ...prevItems, { id: Math.random().toString(), ...ingredient }
-        ]
-      )
+    setIngredients((prevState) => {
+      console.log(prevState)
+      return ([
+        ...prevState, { key: Math.random(), title, amount }
+      ])
     })
+
+
   }
 
 
   return (
     <div className="App">
-      <IngredientForm onsetIngredient={setIngredientHandler} />
+      <IngredientForm onSetIngredients={onSetIngredients} />
 
       <section>
         <Search />
