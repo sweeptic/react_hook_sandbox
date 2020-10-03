@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-
 import IngredientForm from './IngredientForm';
+import IngredientList from './IngredientList';
 import Search from './Search';
 
 const Ingredients = () => {
@@ -8,18 +8,12 @@ const Ingredients = () => {
   const [ingredients, setIngredients] = useState([])
 
   const onSetIngredients = ({ title, amount }) => {
-    console.log(ingredients)
-
-    setIngredients((prevState) => {
-      console.log(prevState)
-      return ([
-        ...prevState, { key: Math.random(), title, amount }
-      ])
-    })
-
-
+    setIngredients((prevState) => ([...prevState, { id: Math.random().toString(), title, amount }]))
   }
 
+  const onRemoveItem = (id) => {
+    setIngredients(ingredients.filter((item) => item.id !== id));
+  }
 
   return (
     <div className="App">
@@ -27,7 +21,7 @@ const Ingredients = () => {
 
       <section>
         <Search />
-        {/* Need to add list here! */}
+        <IngredientList ingredients={ingredients} onRemoveItem={onRemoveItem} />
       </section>
     </div>
   );
