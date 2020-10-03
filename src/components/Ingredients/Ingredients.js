@@ -6,8 +6,8 @@ import Search from './Search';
 const Ingredients = () => {
   const [ingredients, setIngredients] = useState([])
 
-  const onSetIngredients = ({ title, amount }) => {
 
+  const onSetIngredients = ({ title, amount }) => {
     fetch('https://react-hooks-update-7337b.firebaseio.com/ingredients.json', {
       method: 'POST',
       body: JSON.stringify({ title, amount }),
@@ -19,18 +19,28 @@ const Ingredients = () => {
       })
   }
 
+
   const onRemoveItem = (id) => {
     setIngredients(ingredients.filter((item) => item.id !== id));
   }
 
-  // useEffect(() => {
-  //   fetch('https://react-hooks-update-7337b.firebaseio.com/ingredients.json')
-  //     .then(res => res.json())
-  //     .then((res) => {
-  //       console.log(res)
 
-  //     })
-  // }, [])
+  useEffect(() => {
+    fetch('https://react-hooks-update-7337b.firebaseio.com/ingredients.json')
+      .then(response => response.json())
+      .then((responseData) => {
+        const loadedIngredients = [];
+        for (const row in responseData) {
+          const item = {
+            id: row,
+            amount: responseData[row].amount,
+            title: responseData[row].title
+          }
+          loadedIngredients.push(item);
+        }
+        setIngredients(loadedIngredients)
+      })
+  }, [])
 
   return (
     <div className="App">
