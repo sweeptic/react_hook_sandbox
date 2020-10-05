@@ -12,7 +12,7 @@ const Search = React.memo(props => {
 
 
 
-    setTimeout(() => {
+    const timer = setTimeout(() => {
 
       //entered <-> entered 500ms ago (when we set the timeout)
       if (enteredFilter === inputRef.current.value) {
@@ -36,8 +36,10 @@ const Search = React.memo(props => {
 
 
     }, 2000);
-
-
+    //useeffect cleanup. runs before next useEffect runs.
+    return () => {
+      clearTimeout(timer)
+    }
 
   }, [enteredFilter, props.filteredIngredients, inputRef])
 

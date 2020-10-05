@@ -49,6 +49,9 @@ function Ingredients() {
 
 
   const onRemoveItem = (id) => {
+    fetch(`https://react-hooks-update-7337b.firebaseio.com/ingredients/${id}.json`, {
+      method: 'DELETE'
+    })
     setIngredients(ingredients.filter(item => item.id !== id));
   }
 
