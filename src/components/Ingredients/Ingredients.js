@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import IngredientForm from './IngredientForm';
 import Search from './Search';
 import IngredientList from './IngredientList';
@@ -9,6 +9,24 @@ function Ingredients() {
   const [ingredients, setIngredients] = useState([]);
 
 
+  useEffect(() => {
+    fetch('https://react-hooks-update-7337b.firebaseio.com/ingredients.json')
+      .then(resp => resp.json())
+      .then(resp => {
+        const loadedList = []
+        for (const key in resp) {
+          const item = {
+            id: key,
+            title: resp[key].title,
+            amount: resp[key].amount
+          }
+          loadedList.push(item);
+        }
+        setIngredients(loadedList);
+      })
+  }, []);
+
+
   const AddIngredient = ingredient => {
     setIngredients(prevState => [...prevState, { ...ingredient, id: Math.random() }]);
   }
@@ -16,6 +34,7 @@ function Ingredients() {
   const removeIngredient = id => {
     setIngredients(prevState => [...prevState.filter(item => item.id !== id)])
   }
+
 
 
 
