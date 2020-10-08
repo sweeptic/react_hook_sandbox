@@ -7,12 +7,15 @@ function Ingredients() {
   console.log('render Ingredients');
 
   const [ingredients, setIngredients] = useState([]);
+  const [loading, setLoading] = useState(false)
 
 
   useEffect(() => {
+    setLoading(true);
     fetch('https://react-hooks-update-7337b.firebaseio.com/ingredients.json')
       .then(resp => resp.json())
       .then(data => {
+        setLoading(false);
         const loadedList = []
         for (const key in data) {
           const item = {
@@ -27,7 +30,8 @@ function Ingredients() {
   }, []);
 
 
-  const AddIngredient = ingredient => {
+  const addIngredient = ingredient => {
+    setLoading(true);
     fetch('https://react-hooks-update-7337b.firebaseio.com/ingredients.json', {
       method: 'POST',
       body: JSON.stringify(ingredient),
@@ -36,6 +40,7 @@ function Ingredients() {
       .then(resp => resp.json())
       .then(data => {
         console.log(data)
+        setLoading(false);
 
         const item = {
           id: data.name,
@@ -47,7 +52,15 @@ function Ingredients() {
   }
 
   const removeIngredient = id => {
-    setIngredients(prevState => [...prevState.filter(item => item.id !== id)])
+    setLoading(true);
+    fetch(`https://react-hooks-update-7337b.firebaseio.com/ingredients/${id}.json`, {
+      method: 'DELETE',
+    })
+      .then((resp) => {
+        setLoading(false);
+        console.log(resp)
+        setIngredients(prevState => [...prevState.filter(item => item.id !== id)])
+      })
   }
 
 
@@ -55,7 +68,7 @@ function Ingredients() {
 
   return (
     <div className="App">
-      <IngredientForm onAddIngredient={AddIngredient} />
+      <IngredientForm onAddIngredient={addIngredient} loading={loading} />
 
       <section>
         <Search />
