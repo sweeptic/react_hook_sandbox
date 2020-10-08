@@ -4,6 +4,7 @@ import Card from '../UI/Card';
 import './Search.css';
 
 const Search = React.memo(props => {
+  console.log('render Search');
   return (
     <section className="search">
       <Card>

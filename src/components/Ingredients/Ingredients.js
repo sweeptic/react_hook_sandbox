@@ -1,12 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import IngredientForm from './IngredientForm';
 import Search from './Search';
 
 function Ingredients() {
+  console.log('render Ingredients');
+
+  const [ingredients, setIngredients] = useState([]);
+
+
+  const AddIngredient = (params) => {
+    setIngredients((prevState) => [...prevState, { ...params, id: Math.random() }]);
+  }
+
+
   return (
     <div className="App">
-      <IngredientForm />
+      <IngredientForm onAddIngredient={AddIngredient} />
 
       <section>
         <Search />
