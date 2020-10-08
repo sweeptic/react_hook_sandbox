@@ -12,13 +12,13 @@ function Ingredients() {
   useEffect(() => {
     fetch('https://react-hooks-update-7337b.firebaseio.com/ingredients.json')
       .then(resp => resp.json())
-      .then(resp => {
+      .then(data => {
         const loadedList = []
-        for (const key in resp) {
+        for (const key in data) {
           const item = {
             id: key,
-            title: resp[key].title,
-            amount: resp[key].amount
+            title: data[key].title,
+            amount: data[key].amount
           }
           loadedList.push(item);
         }
@@ -28,7 +28,22 @@ function Ingredients() {
 
 
   const AddIngredient = ingredient => {
-    setIngredients(prevState => [...prevState, { ...ingredient, id: Math.random() }]);
+    fetch('https://react-hooks-update-7337b.firebaseio.com/ingredients.json', {
+      method: 'POST',
+      body: JSON.stringify(ingredient),
+      headers: { 'Content-type': 'application/json' }
+    })
+      .then(resp => resp.json())
+      .then(data => {
+        console.log(data)
+
+        const item = {
+          id: data.name,
+          title: ingredient.title,
+          amount: ingredient.amount
+        }
+        setIngredients(prevState => [...prevState, item]);
+      })
   }
 
   const removeIngredient = id => {
