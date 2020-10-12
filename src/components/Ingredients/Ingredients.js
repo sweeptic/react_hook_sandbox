@@ -1,33 +1,35 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import IngredientForm from './IngredientForm';
 import Search from './Search';
 import IngredientList from './IngredientList';
+import ErrorModal from '../UI/ErrorModal';
 
 function Ingredients() {
   // console.log('render Ingredients');
 
   const [ingredients, setIngredients] = useState([]);
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
 
-  useEffect(() => {
-    setLoading(true);
-    fetch('https://react-hooks-update-7337b.firebaseio.com/ingredients.json')
-      .then(resp => resp.json())
-      .then(data => {
-        setLoading(false);
-        const loadedList = []
-        for (const key in data) {
-          const item = {
-            id: key,
-            title: data[key].title,
-            amount: data[key].amount
-          }
-          loadedList.push(item);
-        }
-        setIngredients(loadedList);
-      })
-  }, []);
+  // useEffect(() => {
+  //   setLoading(true);
+  //   fetch('https://react-hooks-update-7337b.firebaseio.com/ingredients.json')
+  //     .then(resp => resp.json())
+  //     .then(data => {
+  //       setLoading(false);
+  //       const loadedList = []
+  //       for (const key in data) {
+  //         const item = {
+  //           id: key,
+  //           title: data[key].title,
+  //           amount: data[key].amount
+  //         }
+  //         loadedList.push(item);
+  //       }
+  //       setIngredients(loadedList);
+  //     })
+  // }, []);
 
 
   const addIngredient = ingredient => {
@@ -49,11 +51,16 @@ function Ingredients() {
         }
         setIngredients(prevState => [...prevState, item]);
       })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      })
   }
 
   const filteredIngredients = useCallback((ingredients) => {
     setIngredients(ingredients);
   }, [])
+
 
   const onSetLoading = useCallback((loadingState) => {
     setLoading(loadingState);
@@ -69,13 +76,21 @@ function Ingredients() {
         setLoading(false);
         setIngredients(prevState => [...prevState.filter(item => item.id !== id)])
       })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      })
   }
 
-
-
+  const clearError = () => {
+    setError(null);
+  }
 
   return (
     <div className="App">
+
+      {error && <ErrorModal onClose={clearError}>{error}</ErrorModal>}
+
       <IngredientForm onAddIngredient={addIngredient} loading={loading} />
 
       <section>

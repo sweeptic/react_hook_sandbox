@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import Card from '../UI/Card';
 import './Search.css';
@@ -8,28 +8,42 @@ import './Search.css';
 const Search = React.memo(({ setLoading, filteredIngredients }) => {
   // console.log('render Search');
   const [search, setSearch] = useState('');
-
+  const inputRef = useRef();
 
   useEffect(() => {
-    setLoading(true);
-    const query = search.length === 0 ? '' : `?orderBy="title"&equalTo="${search}"`
-    fetch('https://react-hooks-update-7337b.firebaseio.com/ingredients.json' + query)
-      .then(resp => resp.json())
-      .then(data => {
-        setLoading(false);
-        const loadedList = []
-        for (const key in data) {
-          const item = {
-            id: key,
-            title: data[key].title,
-            amount: data[key].amount
-          }
-          loadedList.push(item);
-        }
-        console.log('useeffect run')
-        filteredIngredients(loadedList);
-      })
-  }, [search, filteredIngredients]);
+
+    // console.log(inputRef.current.value)
+
+
+    const timer = setTimeout(() => {
+
+      if (inputRef.current.value === search) {
+        setLoading(true);
+        const query = search.length === 0 ? '' : `?orderBy="title"&equalTo="${search}"`
+        fetch('https://react-hooks-update-7337b.firebaseio.com/ingredients.json' + query)
+          .then(resp => resp.json())
+          .then(data => {
+            setLoading(false);
+            const loadedList = []
+            for (const key in data) {
+              const item = {
+                id: key,
+                title: data[key].title,
+                amount: data[key].amount
+              }
+              loadedList.push(item);
+            }
+            filteredIngredients(loadedList);
+          })
+      }
+
+    }, !search ? 0 : 1500);
+
+    return () => {
+      clearTimeout(timer)
+    }
+
+  }, [search, filteredIngredients, setLoading]);
 
 
   return (
@@ -37,7 +51,11 @@ const Search = React.memo(({ setLoading, filteredIngredients }) => {
       <Card>
         <div className="search-input">
           <label>Filter by Title</label>
-          <input type="text" value={search} onChange={ev => setSearch(ev.target.value)} />
+          <input
+            ref={inputRef}
+            type="text"
+            value={search}
+            onChange={ev => setSearch(ev.target.value)} />
         </div>
       </Card>
     </section>
