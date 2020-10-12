@@ -2,7 +2,10 @@ import React from 'react';
 
 import Ingredients from './components/Ingredients/Ingredients';
 
-const App = props => {
+
+const MyContext = React.createContext(null);
+
+const App = () => {
   return <Ingredients />;
 };
 

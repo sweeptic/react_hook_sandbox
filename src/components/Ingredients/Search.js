@@ -5,25 +5,23 @@ import './Search.css';
 
 
 
-const Search = React.memo(({ setLoading, filteredIngredients }) => {
-  // console.log('render Search');
+const Search = React.memo(({ filteredIngredients, dispatchHttp }) => {
+
   const [search, setSearch] = useState('');
   const inputRef = useRef();
 
   useEffect(() => {
 
-    // console.log(inputRef.current.value)
-
-
     const timer = setTimeout(() => {
-
       if (inputRef.current.value === search) {
-        setLoading(true);
+        // setLoading(true);
+        dispatchHttp({ type: 'SEND' })
         const query = search.length === 0 ? '' : `?orderBy="title"&equalTo="${search}"`
         fetch('https://react-hooks-update-7337b.firebaseio.com/ingredients.json' + query)
           .then(resp => resp.json())
           .then(data => {
-            setLoading(false);
+            // setLoading(false);
+            dispatchHttp({ type: 'RESPONSE' })
             const loadedList = []
             for (const key in data) {
               const item = {
@@ -43,7 +41,7 @@ const Search = React.memo(({ setLoading, filteredIngredients }) => {
       clearTimeout(timer)
     }
 
-  }, [search, filteredIngredients, setLoading]);
+  }, [search, filteredIngredients, dispatchHttp]);
 
 
   return (
