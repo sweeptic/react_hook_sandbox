@@ -1,0 +1,8 @@
+fetch('https://react-hooks-update-7337b.firebaseio.com/ingredients.json', {
+      method: 'POST',
+      body: JSON.stringify({ title, amount }),
+      headers: { 'Content-type': 'application/json' }
+    })
+	
+	const query = search.length === 0 ? '' : `?orderBy="title"&equalTo="${search}"`
+    fetch('https://react-hooks-update-7337b.firebaseio.com/ingredients.json' + query)

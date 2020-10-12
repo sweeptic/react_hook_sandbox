@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import IngredientForm from './IngredientForm';
 import Search from './Search';
 import IngredientList from './IngredientList';
 
 function Ingredients() {
-  console.log('render Ingredients');
+  // console.log('render Ingredients');
 
   const [ingredients, setIngredients] = useState([]);
   const [loading, setLoading] = useState(false)
@@ -51,6 +51,15 @@ function Ingredients() {
       })
   }
 
+  const filteredIngredients = useCallback((ingredients) => {
+    setIngredients(ingredients);
+  }, [])
+
+  const onSetLoading = useCallback((loadingState) => {
+    setLoading(loadingState);
+  }, [])
+
+
   const removeIngredient = id => {
     setLoading(true);
     fetch(`https://react-hooks-update-7337b.firebaseio.com/ingredients/${id}.json`, {
@@ -58,7 +67,6 @@ function Ingredients() {
     })
       .then((resp) => {
         setLoading(false);
-        console.log(resp)
         setIngredients(prevState => [...prevState.filter(item => item.id !== id)])
       })
   }
@@ -71,7 +79,7 @@ function Ingredients() {
       <IngredientForm onAddIngredient={addIngredient} loading={loading} />
 
       <section>
-        <Search />
+        <Search setLoading={onSetLoading} filteredIngredients={filteredIngredients} />
         {/* Need to add list here! */}
         <IngredientList ingredients={ingredients} onRemoveItem={removeIngredient} />
       </section>
