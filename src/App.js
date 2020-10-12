@@ -1,12 +1,7 @@
 import React from 'react';
-
 import Ingredients from './components/Ingredients/Ingredients';
 
 
-const MyContext = React.createContext(null);
-
-const App = () => {
-  return <Ingredients />;
-};
+const App = () => <Ingredients />
 
 export default App;

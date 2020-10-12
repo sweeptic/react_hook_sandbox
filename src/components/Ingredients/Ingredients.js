@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useReducer } from 'react';
+import React, { useCallback, useEffect, useReducer, useMemo } from 'react';
 import IngredientForm from './IngredientForm';
 import Search from './Search';
 import IngredientList from './IngredientList';
@@ -40,7 +40,7 @@ function Ingredients() {
 
 
 
-  const addIngredient = ingredient => {
+  const addIngredient = useCallback(ingredient => {
 
     dispatchHttp({ type: 'SEND' })
     fetch('https://react-hooks-update-7337b.firebaseio.com/ingredients.json', {
@@ -50,7 +50,7 @@ function Ingredients() {
     })
       .then(resp => resp.json())
       .then(data => {
-        console.log(data)
+        // console.log(data)
         dispatchHttp({ type: 'RESPONSE' })
 
         const item = {
@@ -64,7 +64,7 @@ function Ingredients() {
       .catch((err) => {
         dispatchHttp({ type: 'ERROR', errorMessage: err.message })
       })
-  }
+  }, [])
 
   const filteredIngredients = useCallback((filteredingredients) => {
     dispatch({ type: 'SET', ingredients: filteredingredients })
@@ -72,7 +72,7 @@ function Ingredients() {
 
 
 
-  const removeIngredient = id => {
+  const removeIngredient = useCallback(id => {
     dispatchHttp({ type: 'SEND' })
     fetch(`https://react-hooks-update-7337b.firebaseio.com/ingredients/${id}.json`, {
       method: 'DELETE',
@@ -84,16 +84,21 @@ function Ingredients() {
       .catch((err) => {
         dispatchHttp({ type: 'ERROR', errorMessage: err.message })
       })
-  }
+  }, [])
 
   useEffect(() => {
     console.log('RENDERING INGREDIENTS', userIngredients)
   }, [userIngredients])
 
 
-  const clearError = () => {
+  const clearError = useCallback(() => {
     dispatchHttp({ type: 'CLEAR' })
-  }
+  }, [])
+
+  //
+  const ingredientList = useMemo(() => {
+    return <IngredientList ingredients={userIngredients} onRemoveItem={removeIngredient} />
+  }, [userIngredients, removeIngredient])
 
   return (
     <div className="App">
@@ -105,7 +110,7 @@ function Ingredients() {
       <section>
         <Search dispatchHttp={dispatchHttp} filteredIngredients={filteredIngredients} />
         {/* Need to add list here! */}
-        <IngredientList ingredients={userIngredients} onRemoveItem={removeIngredient} />
+        {ingredientList}
       </section>
     </div>
   );
