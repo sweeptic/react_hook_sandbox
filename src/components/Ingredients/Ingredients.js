@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect, useReducer } from 'react';
 import IngredientForm from './IngredientForm';
 import Search from './Search';
 import IngredientList from './IngredientList';
@@ -6,30 +6,29 @@ import ErrorModal from '../UI/ErrorModal';
 
 function Ingredients() {
   // console.log('render Ingredients');
+  const ingredientReducer = (currentIngredients, action) => {
+    switch (action.type) {
+      case 'SET':
+        return action.ingredients;
+      case 'ADD':
+        return [...currentIngredients, action.ingredient];
+      case 'DELETE':
+        return currentIngredients.filter(ing => ing.id !== action.id)
 
-  const [ingredients, setIngredients] = useState([]);
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+      default:
+        throw new Error('Should not get there')
+    }
+  }
 
 
-  // useEffect(() => {
-  //   setLoading(true);
-  //   fetch('https://react-hooks-update-7337b.firebaseio.com/ingredients.json')
-  //     .then(resp => resp.json())
-  //     .then(data => {
-  //       setLoading(false);
-  //       const loadedList = []
-  //       for (const key in data) {
-  //         const item = {
-  //           id: key,
-  //           title: data[key].title,
-  //           amount: data[key].amount
-  //         }
-  //         loadedList.push(item);
-  //       }
-  //       setIngredients(loadedList);
-  //     })
-  // }, []);
+
+  const initialState = [];
+  const [userIngredients, dispatch] = useReducer(ingredientReducer, initialState);
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+
 
 
   const addIngredient = ingredient => {
@@ -49,7 +48,8 @@ function Ingredients() {
           title: ingredient.title,
           amount: ingredient.amount
         }
-        setIngredients(prevState => [...prevState, item]);
+
+        dispatch({ type: 'ADD', ingredient: item })
       })
       .catch((err) => {
         setError(err.message);
@@ -57,8 +57,8 @@ function Ingredients() {
       })
   }
 
-  const filteredIngredients = useCallback((ingredients) => {
-    setIngredients(ingredients);
+  const filteredIngredients = useCallback((filteredingredients) => {
+    dispatch({ type: 'SET', ingredients: filteredingredients })
   }, [])
 
 
@@ -74,13 +74,17 @@ function Ingredients() {
     })
       .then((resp) => {
         setLoading(false);
-        setIngredients(prevState => [...prevState.filter(item => item.id !== id)])
+        dispatch({ type: 'DELETE', id: id })
       })
       .catch((err) => {
         setError(err.message);
         setLoading(false);
       })
   }
+
+  useEffect(() => {
+    console.log('RENDERING INGREDIENTS', userIngredients)
+  }, [userIngredients])
 
   const clearError = () => {
     setError(null);
@@ -96,7 +100,7 @@ function Ingredients() {
       <section>
         <Search setLoading={onSetLoading} filteredIngredients={filteredIngredients} />
         {/* Need to add list here! */}
-        <IngredientList ingredients={ingredients} onRemoveItem={removeIngredient} />
+        <IngredientList ingredients={userIngredients} onRemoveItem={removeIngredient} />
       </section>
     </div>
   );
