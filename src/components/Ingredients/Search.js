@@ -1,59 +1,64 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
+import Card from "../UI/Card";
+import "./Search.css";
+import useHttp from "./../http/http";
+import ErrorModal from "./../UI/ErrorModal";
 
-import Card from '../UI/Card';
-import './Search.css';
-
-
-
-const Search = React.memo(({ filteredIngredients, dispatchHttp }) => {
-
-  const [search, setSearch] = useState('');
+const Search = React.memo(({ filteredIngredients }) => {
+  const [search, setSearch] = useState("");
   const inputRef = useRef();
+  const { isLoading, data, error, sendRequest, clear } = useHttp();
 
   useEffect(() => {
+    const timer = setTimeout(
+      () => {
+        if (inputRef.current.value === search) {
+          const query =
+            search.length === 0 ? "" : `?orderBy="title"&equalTo="${search}"`;
 
-    const timer = setTimeout(() => {
-      if (inputRef.current.value === search) {
-        // setLoading(true);
-        dispatchHttp({ type: 'SEND' })
-        const query = search.length === 0 ? '' : `?orderBy="title"&equalTo="${search}"`
-        fetch('https://react-hooks-update-7337b.firebaseio.com/ingredients.json' + query)
-          .then(resp => resp.json())
-          .then(data => {
-            // setLoading(false);
-            dispatchHttp({ type: 'RESPONSE' })
-            const loadedList = []
-            for (const key in data) {
-              const item = {
-                id: key,
-                title: data[key].title,
-                amount: data[key].amount
-              }
-              loadedList.push(item);
-            }
-            filteredIngredients(loadedList);
-          })
-      }
-
-    }, !search ? 0 : 1500);
+          sendRequest(
+            "https://react-hooks-update-7337b.firebaseio.com/ingredients.json" +
+              query,
+            "GET"
+          );
+        }
+      },
+      !search ? 0 : 1500
+    );
 
     return () => {
-      clearTimeout(timer)
+      clearTimeout(timer);
+    };
+  }, [search, filteredIngredients, sendRequest]);
+
+  useEffect(() => {
+    if (!isLoading && !error && data) {
+      const loadedIngredients = [];
+      for (const key in data) {
+        loadedIngredients.push({
+          id: key,
+          title: data[key].title,
+          amount: data[key].amount,
+        });
+      }
+      filteredIngredients(loadedIngredients);
     }
-
-  }, [search, filteredIngredients, dispatchHttp]);
-
+  }, [data, isLoading, error, filteredIngredients]);
 
   return (
     <section className="search">
+      {error && <ErrorModal onClose={clear}>{error}</ErrorModal>}
+
       <Card>
         <div className="search-input">
           <label>Filter by Title</label>
+          {isLoading && <span>Loading...</span>}
           <input
             ref={inputRef}
             type="text"
             value={search}
-            onChange={ev => setSearch(ev.target.value)} />
+            onChange={(ev) => setSearch(ev.target.value)}
+          />
         </div>
       </Card>
     </section>
