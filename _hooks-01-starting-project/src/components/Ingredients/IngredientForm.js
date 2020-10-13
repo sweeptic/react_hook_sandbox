@@ -1,19 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
+
 import Card from '../UI/Card';
-import LoadingIndicator from '../UI/LoadingIndicator';
 import './IngredientForm.css';
 
 const IngredientForm = React.memo(props => {
-
-  const [title, setTitle] = useState('');
-  const [amount, setAmount] = useState('');
-
-  // console.log('render IngredientForm');
-
-
   const submitHandler = event => {
     event.preventDefault();
-    props.onAddIngredient({ title, amount })
+    // ...
   };
 
   return (
@@ -22,18 +15,14 @@ const IngredientForm = React.memo(props => {
         <form onSubmit={submitHandler}>
           <div className="form-control">
             <label htmlFor="title">Name</label>
-            <input type="text" id="title" value={title} onChange={(ev) => setTitle(ev.target.value)} />
+            <input type="text" id="title" />
           </div>
           <div className="form-control">
             <label htmlFor="amount">Amount</label>
-            <input type="number" id="amount" value={amount} onChange={(ev) => setAmount(ev.target.value)} />
+            <input type="number" id="amount" />
           </div>
           <div className="ingredient-form__actions">
             <button type="submit">Add Ingredient</button>
-
-            {props.loading && <LoadingIndicator />}
-
-
           </div>
         </form>
       </Card>
