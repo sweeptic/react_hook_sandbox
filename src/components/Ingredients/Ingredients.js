@@ -19,6 +19,22 @@ function Ingredients() {
     console.log(ingredients);
   }, [ingredients]);
 
+  useEffect(() => {
+    fetch('https://react-hooks-update-7337b.firebaseio.com/ingredients.json')
+      .then(res => res.json())
+      .then(data => {
+        let loadedIngredients = [];
+        for (const key in data) {
+          loadedIngredients.push({
+            id: key,
+            title: data[key].title,
+            amount: data[key].amount,
+          });
+        }
+        setIngredients(loadedIngredients);
+      });
+  }, []);
+
   return (
     <div className='App'>
       <IngredientForm onAddIngredientHandler={AddIngredientHandler} />
