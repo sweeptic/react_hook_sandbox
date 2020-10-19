@@ -24,7 +24,20 @@ function Ingredients() {
   };
 
   const RemoveItemHandler = itemId => {
-    setIngredients(currState => currState.filter(item => item.id !== itemId));
+    setLoading(true);
+    fetch(
+      `https://react-hooks-update-7337b.firebaseio.com/ingredients/${itemId}.json`,
+      {
+        method: 'DELETE',
+      }
+    )
+      .then(res => res.json())
+      .then(res => {
+        setLoading(false);
+        setIngredients(currState =>
+          currState.filter(item => item.id !== itemId)
+        );
+      });
   };
 
   useEffect(() => {
