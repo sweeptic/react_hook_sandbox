@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import IngredientForm from './IngredientForm';
 import Search from './Search';
@@ -41,30 +41,34 @@ function Ingredients() {
   };
 
   useEffect(() => {
-    console.log(ingredients);
+    // console.log(ingredients);
   }, [ingredients]);
 
-  useEffect(() => {
-    setLoading(true);
-    fetch('https://react-hooks-update-7337b.firebaseio.com/ingredients.json')
-      .then(res => res.json())
-      .then(data => {
-        setLoading(false);
-        let loadedIngredients = [];
-        for (const key in data) {
-          loadedIngredients.push({
-            id: key,
-            title: data[key].title,
-            amount: data[key].amount,
-          });
-        }
-        setIngredients(loadedIngredients);
-      });
+  // useEffect(() => {
+  //   setLoading(true);
+  //   fetch('https://react-hooks-update-7337b.firebaseio.com/ingredients.json')
+  //     .then(res => res.json())
+  //     .then(data => {
+  //       setLoading(false);
+  //       let loadedIngredients = [];
+  //       for (const key in data) {
+  //         loadedIngredients.push({
+  //           id: key,
+  //           title: data[key].title,
+  //           amount: data[key].amount,
+  //         });
+  //       }
+  //       setIngredients(loadedIngredients);
+  //     });
+  // }, []);
+
+  const onSetLoading = useCallback(loadingState => {
+    setLoading(loadingState);
   }, []);
 
-  const onSetLoading = loadingState => {
-    setLoading(loadingState);
-  };
+  const onSetIngredients = useCallback(ingredients => {
+    setIngredients(ingredients);
+  }, []);
 
   return (
     <div className='App'>
@@ -74,7 +78,7 @@ function Ingredients() {
       />
 
       <section>
-        <Search setLoading={onSetLoading} />
+        <Search setLoading={onSetLoading} setIngredients={onSetIngredients} />
         {/* Need to add list here! */}
         <IngredientList
           ingredients={ingredients}

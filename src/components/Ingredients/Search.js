@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Card from '../UI/Card';
 import './Search.css';
 
-const Search = React.memo(props => {
+const Search = React.memo(({ setLoading, setIngredients }) => {
   const [search, setSearch] = useState('');
 
   const inputRef = useRef();
@@ -11,7 +11,7 @@ const Search = React.memo(props => {
   useEffect(() => {
     setTimeout(() => {
       if (search === inputRef.current.value) {
-        props.setLoading(true);
+        setLoading(true);
         const query =
           search.length === 0 ? '' : `?orderBy="title"&equalTo="${search}"`;
         fetch(
@@ -19,13 +19,21 @@ const Search = React.memo(props => {
             query
         )
           .then(res => res.json())
-          .then(res => {
-            props.setLoading(false);
-            console.log(res);
+          .then(data => {
+            setLoading(false);
+            let loadedIngredients = [];
+            for (const key in data) {
+              loadedIngredients.push({
+                id: key,
+                title: data[key].title,
+                amount: data[key].amount,
+              });
+            }
+            setIngredients(loadedIngredients);
           });
       }
     }, 1000);
-  }, [search]);
+  }, [search, setLoading, setIngredients]);
 
   return (
     <section className='search'>
