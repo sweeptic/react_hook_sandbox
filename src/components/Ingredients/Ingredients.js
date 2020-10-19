@@ -62,6 +62,10 @@ function Ingredients() {
       });
   }, []);
 
+  const onSetLoading = loadingState => {
+    setLoading(loadingState);
+  };
+
   return (
     <div className='App'>
       <IngredientForm
@@ -70,7 +74,7 @@ function Ingredients() {
       />
 
       <section>
-        <Search />
+        <Search setLoading={onSetLoading} />
         {/* Need to add list here! */}
         <IngredientList
           ingredients={ingredients}
