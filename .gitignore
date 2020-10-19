@@ -22,3 +22,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 /hooks-01-starting-project
+/_hooks-01-starting-project
+/_redux-01-starting-project
+/_replace-redux-06-bonus-multiple-slices
