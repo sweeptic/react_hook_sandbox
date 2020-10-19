@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import IngredientForm from './IngredientForm';
 import Search from './Search';
@@ -10,7 +10,7 @@ function Ingredients() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
-  const AddIngredientHandler = ({ title, amount }) => {
+  const AddIngredientHandler = useCallback(({ title, amount }) => {
     setLoading(true);
     fetch('https://react-hooks-update-7337b.firebaseio.com/ingredients.json', {
       method: 'POST',
@@ -26,9 +26,9 @@ function Ingredients() {
         setError(true);
         setLoading(false);
       });
-  };
+  }, []);
 
-  const RemoveItemHandler = itemId => {
+  const RemoveItemHandler = useCallback(itemId => {
     setLoading(true);
     fetch(
       `https://react-hooks-update-7337b.firebaseio.com/ingredients/${itemId}.json`,
@@ -47,7 +47,7 @@ function Ingredients() {
         setError(true);
         setLoading(false);
       });
-  };
+  }, []);
 
   // const onSetLoading = useCallback(loadingState => {
   //   setLoading(loadingState);
@@ -61,6 +61,15 @@ function Ingredients() {
     setError(false);
   };
 
+  const ingredientList = useMemo(() => {
+    return (
+      <IngredientList
+        ingredients={ingredients}
+        onRemoveItem={RemoveItemHandler}
+      />
+    );
+  }, [ingredients, RemoveItemHandler]);
+
   return (
     <div className='App'>
       {error && <ErrorModal onClose={modalCloseHandler} />}
@@ -68,16 +77,10 @@ function Ingredients() {
         onAddIngredientHandler={AddIngredientHandler}
         loading={loading}
       />
-
       <section>
-        <Search
-          /*setLoading={onSetLoading} */ setIngredients={onSetIngredients}
-        />
-        <IngredientList
-          ingredients={ingredients}
-          onRemoveItem={RemoveItemHandler}
-        />
+        <Search setIngredients={onSetIngredients} />
       </section>
+      {ingredientList}
     </div>
   );
 }
