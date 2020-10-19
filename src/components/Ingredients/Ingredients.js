@@ -1,12 +1,14 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import IngredientForm from './IngredientForm';
 import Search from './Search';
 import IngredientList from './IngredientList';
+import ErrorModal from './../UI/ErrorModal';
 
 function Ingredients() {
   const [ingredients, setIngredients] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   const AddIngredientHandler = ({ title, amount }) => {
     setLoading(true);
@@ -18,8 +20,11 @@ function Ingredients() {
       .then(res => res.json())
       .then(({ name }) => {
         setLoading(false);
-        console.log(name);
         setIngredients(prev => [...prev, { id: name, title, amount }]);
+      })
+      .catch(err => {
+        setError(true);
+        setLoading(false);
       });
   };
 
@@ -37,49 +42,37 @@ function Ingredients() {
         setIngredients(currState =>
           currState.filter(item => item.id !== itemId)
         );
+      })
+      .catch(err => {
+        setError(true);
+        setLoading(false);
       });
   };
 
-  useEffect(() => {
-    // console.log(ingredients);
-  }, [ingredients]);
-
-  // useEffect(() => {
-  //   setLoading(true);
-  //   fetch('https://react-hooks-update-7337b.firebaseio.com/ingredients.json')
-  //     .then(res => res.json())
-  //     .then(data => {
-  //       setLoading(false);
-  //       let loadedIngredients = [];
-  //       for (const key in data) {
-  //         loadedIngredients.push({
-  //           id: key,
-  //           title: data[key].title,
-  //           amount: data[key].amount,
-  //         });
-  //       }
-  //       setIngredients(loadedIngredients);
-  //     });
+  // const onSetLoading = useCallback(loadingState => {
+  //   setLoading(loadingState);
   // }, []);
-
-  const onSetLoading = useCallback(loadingState => {
-    setLoading(loadingState);
-  }, []);
 
   const onSetIngredients = useCallback(ingredients => {
     setIngredients(ingredients);
   }, []);
 
+  const modalCloseHandler = () => {
+    setError(false);
+  };
+
   return (
     <div className='App'>
+      {error && <ErrorModal onClose={modalCloseHandler} />}
       <IngredientForm
         onAddIngredientHandler={AddIngredientHandler}
         loading={loading}
       />
 
       <section>
-        <Search setLoading={onSetLoading} setIngredients={onSetIngredients} />
-        {/* Need to add list here! */}
+        <Search
+          /*setLoading={onSetLoading} */ setIngredients={onSetIngredients}
+        />
         <IngredientList
           ingredients={ingredients}
           onRemoveItem={RemoveItemHandler}

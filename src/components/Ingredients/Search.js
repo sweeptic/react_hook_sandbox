@@ -3,13 +3,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import Card from '../UI/Card';
 import './Search.css';
 
-const Search = React.memo(({ setLoading, setIngredients }) => {
+const Search = React.memo(({ /*setLoading,*/ setIngredients }) => {
   const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const inputRef = useRef();
 
   useEffect(() => {
-    setTimeout(() => {
+    const timeOutVal = search.length === 0 ? 0 : 1000;
+    const timer = setTimeout(() => {
       if (search === inputRef.current.value) {
         setLoading(true);
         const query =
@@ -32,14 +34,16 @@ const Search = React.memo(({ setLoading, setIngredients }) => {
             setIngredients(loadedIngredients);
           });
       }
-    }, 1000);
-  }, [search, setLoading, setIngredients]);
+    }, timeOutVal);
+    return () => clearTimeout(timer);
+  }, [search, setIngredients]);
 
   return (
     <section className='search'>
       <Card>
         <div className='search-input'>
-          <label>Filter by Title</label>
+          <label>Filter by Title </label>
+          {loading && <div> loading...</div>}
           <input
             type='text'
             value={search}
