@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useReducer, useState } from 'react';
+import React, { useCallback, useMemo, useReducer } from 'react';
 
 import IngredientForm from './IngredientForm';
 import Search from './Search';
@@ -8,8 +8,6 @@ import ErrorModal from './../UI/ErrorModal';
 function Ingredients() {
   // const [ingredients, setIngredients] = useState([]);
 
-  const initialState = [];
-
   const reducer = (currentState, action) => {
     switch (action.type) {
       case 'SET':
@@ -17,19 +15,39 @@ function Ingredients() {
       case 'ADD':
         return [...currentState, action.ingredient];
       case 'DELETE':
-        return currentState.filter(i => i !== action.itemId);
+        return currentState.filter(i => i.id !== action.id);
       default:
         throw new Error('Should not get there');
     }
   };
 
-  const [componentState, dispatch] = useReducer(reducer, initialState);
+  const HttpReducer = (currentState, action) => {
+    switch (action.type) {
+      case 'SEND':
+        return { loading: true, error: null };
+      case 'RESPONSE':
+        return { ...currentState, loading: false };
+      case 'ERROR':
+        return { loading: false, error: action.errorMessage };
+      case 'CLEAR':
+        return { ...currentState, error: null };
+      default:
+        throw new Error('Should not get there');
+    }
+  };
+  const [componentState, dispatch] = useReducer(reducer, []);
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const [httpState, dispatchHttp] = useReducer(HttpReducer, {
+    loading: false,
+    error: null,
+  });
+
+  // const [loading, setLoading] = useState(false);
+  // const [error, setError] = useState(false);
 
   const AddIngredientHandler = useCallback(({ title, amount }) => {
-    setLoading(true);
+    // setLoading(true);
+    dispatchHttp({ type: 'SEND' });
     fetch('https://react-hooks-update-7337b.firebaseio.com/ingredients.json', {
       method: 'POST',
       body: JSON.stringify({ title, amount }),
@@ -37,20 +55,22 @@ function Ingredients() {
     })
       .then(res => res.json())
       .then(({ name }) => {
-        setLoading(false);
+        // setLoading(false);
+        dispatchHttp({ type: 'RESPONSE' });
 
         dispatch({ type: 'ADD', ingredient: { id: name, title, amount } });
         // setIngredients(prev => [...prev, { id: name, title, amount }]);
       })
 
       .catch(err => {
-        setError(true);
-        setLoading(false);
+        dispatchHttp({ type: 'ERROR', errorMessage: err.message });
+        // setError(true);
+        // setLoading(false);
       });
   }, []);
 
   const RemoveItemHandler = useCallback(itemId => {
-    setLoading(true);
+    dispatchHttp({ type: 'SEND' });
     fetch(
       `https://react-hooks-update-7337b.firebaseio.com/ingredients/${itemId}.json`,
       {
@@ -59,7 +79,7 @@ function Ingredients() {
     )
       .then(res => res.json())
       .then(res => {
-        setLoading(false);
+        dispatchHttp({ type: 'RESPONSE' });
 
         dispatch({ type: 'DELETE', id: itemId });
         // setIngredients(currState =>
@@ -67,8 +87,9 @@ function Ingredients() {
         // );
       })
       .catch(err => {
-        setError(true);
-        setLoading(false);
+        dispatchHttp({ type: 'ERROR', errorMessage: err.message });
+        // setError(true);
+        // setLoading(false);
       });
   }, []);
 
@@ -82,7 +103,7 @@ function Ingredients() {
   }, []);
 
   const modalCloseHandler = () => {
-    setError(false);
+    dispatchHttp({ type: 'CLEAR' });
   };
 
   const ingredientList = useMemo(() => {
@@ -96,13 +117,15 @@ function Ingredients() {
 
   return (
     <div className='App'>
-      {error && <ErrorModal onClose={modalCloseHandler} />}
+      {httpState.error && (
+        <ErrorModal onClose={modalCloseHandler}>{httpState.error}</ErrorModal>
+      )}
       <IngredientForm
         onAddIngredientHandler={AddIngredientHandler}
-        loading={loading}
+        loading={httpState.loading}
       />
       <section>
-        <Search setIngredients={onSetIngredients} />
+        <Search dispatchHttp={dispatchHttp} setIngredients={onSetIngredients} />
       </section>
       {ingredientList}
     </div>
