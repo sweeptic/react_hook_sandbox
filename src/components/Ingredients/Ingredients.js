@@ -1,14 +1,15 @@
-import React, { useCallback, useMemo, useReducer } from 'react';
-
+import React, { useCallback, useMemo, useReducer, useEffect } from 'react';
 import IngredientForm from './IngredientForm';
 import Search from './Search';
 import IngredientList from './IngredientList';
+import ErrorModal from './../UI/ErrorModal';
+import useHttp from './../http/http';
 
 function Ingredients() {
   const reducer = (currentState, action) => {
     switch (action.type) {
       case 'SET':
-        return action.ingredients;
+        return action.ingredient;
       case 'ADD':
         return [...currentState, action.ingredient];
       case 'DELETE':
@@ -18,38 +19,60 @@ function Ingredients() {
     }
   };
 
+  const {
+    isLoading,
+    error,
+    data,
+    sendRequest,
+    reqExtra,
+    reqIdentifer,
+    clear,
+  } = useHttp();
+
   const [componentState, dispatch] = useReducer(reducer, []);
 
-  const AddIngredientHandler = useCallback(({ title, amount }) => {
-    fetch('https://react-hooks-update-7337b.firebaseio.com/ingredients.json', {
-      method: 'POST',
-      body: JSON.stringify({ title, amount }),
-      headers: { 'Content-type': 'application/json' },
-    })
-      .then(res => res.json())
-      .then(({ name }) => {
-        dispatch({ type: 'ADD', ingredient: { id: name, title, amount } });
-      })
+  useEffect(() => {
+    if (!isLoading && !error && reqIdentifer === 'REMOVE_INGREDIENT') {
+      dispatch({ type: 'DELETE', id: reqExtra });
+    } else if (!isLoading && !error && reqIdentifer === 'ADD_INGREDIENT') {
+      dispatch({
+        type: 'ADD',
+        ingredient: { id: data.name, ...reqExtra },
+      });
+    }
+  }, [data, reqExtra, reqIdentifer, isLoading, error]);
 
-      .catch(err => {});
-  }, []);
+  const addIngredientHandler = useCallback(
+    ingredient => {
+      sendRequest(
+        //url, method, body, reqExtra, reqIdentifer
+        'https://react-hooks-update-7337b.firebaseio.com/ingredients.json',
+        'POST',
+        JSON.stringify(ingredient),
+        ingredient,
+        'ADD_INGREDIENT'
+      );
+    },
+    [sendRequest]
+  );
 
-  const RemoveItemHandler = useCallback(itemId => {
-    fetch(
-      `https://react-hooks-update-7337b.firebaseio.com/ingredients/${itemId}.json`,
-      {
-        method: 'DELETE',
-      }
-    )
-      .then(res => res.json())
-      .then(res => {
-        dispatch({ type: 'DELETE', id: itemId });
-      })
-      .catch(err => {});
-  }, []);
+  const RemoveItemHandler = useCallback(
+    ingredientId => {
+      console.log(ingredientId);
+      sendRequest(
+        //url, method, body, reqExtra, reqIdentifer
+        `https://react-hooks-update-7337b.firebaseio.com/ingredients/${ingredientId}.json`,
+        'DELETE',
+        null,
+        ingredientId,
+        'REMOVE_INGREDIENT'
+      );
+    },
+    [sendRequest]
+  );
 
   const onSetIngredients = useCallback(filteredIngredients => {
-    dispatch({ type: 'SET', ingredients: filteredIngredients });
+    dispatch({ type: 'SET', ingredient: filteredIngredients });
   }, []);
 
   const ingredientList = useMemo(() => {
@@ -63,7 +86,8 @@ function Ingredients() {
 
   return (
     <div className='App'>
-      <IngredientForm onAddIngredientHandler={AddIngredientHandler} />
+      {error && <ErrorModal onClose={clear}>{error}</ErrorModal>}
+      <IngredientForm onAddIngredientHandler={addIngredientHandler} />
       <section>
         <Search setIngredients={onSetIngredients} />
       </section>
