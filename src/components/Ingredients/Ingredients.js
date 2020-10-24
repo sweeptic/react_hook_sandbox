@@ -3,7 +3,6 @@ import React, { useCallback, useMemo, useReducer } from 'react';
 import IngredientForm from './IngredientForm';
 import Search from './Search';
 import IngredientList from './IngredientList';
-import ErrorModal from './../UI/ErrorModal';
 
 function Ingredients() {
   const reducer = (currentState, action) => {

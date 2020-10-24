@@ -35,7 +35,7 @@ const httpReducer = (curHttpState, action) => {
 };
 
 const useHttp = () => {
-  const [httpState, dispatchHttp] = useReducer(HttpReducer, initialState);
+  const [httpState, dispatchHttp] = useReducer(httpReducer, initialState);
 
   const clear = useCallback(() => dispatchHttp({ type: 'CLEAR' }), []);
 
@@ -79,3 +79,5 @@ const useHttp = () => {
     clear: clear,
   };
 };
+
+export default useHttp;
