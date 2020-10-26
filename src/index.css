@@ -23,9 +23,22 @@ button {
 
 button:hover,
 button:active {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.26);
+  background: white;
+  color: #ff2058;
 }
 
 button:focus {
   outline: none;
+}
+
+button.button-outline {
+  background: white;
+  color: #ff2058;
+}
+
+button.button-outline:hover,
+button.button-outline:active {
+  background: #ff2058;
+  color: white;
+  box-shadow: none;
 }
