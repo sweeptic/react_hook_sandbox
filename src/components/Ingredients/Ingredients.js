@@ -14,7 +14,9 @@ function Ingredients() {
   };
 
   const onRemoveItem = id => {
-    console.log('remove', id);
+    setIngredients(prevState => {
+      return [...prevState.filter(i => i.id !== id)];
+    });
   };
 
   return (
