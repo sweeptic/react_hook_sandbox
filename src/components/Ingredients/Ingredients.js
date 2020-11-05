@@ -24,15 +24,37 @@ function Ingredients() {
   }, []);
 
   const onAddIngredientHandler = ({ name, amount }) => {
-    setIngredients(prevState => {
-      return [...prevState, { name, amount, id: Math.random() }];
-    });
+    fetch(`https://react-hooks-update-7337b.firebaseio.com/ingredients.json`, {
+      method: 'POST',
+      body: JSON.stringify({ title: name, amount }),
+      headers: { 'Content-type': 'application/json' },
+    })
+      .then(res => res.json())
+      .then(data => {
+        setIngredients(prevState => {
+          return [...prevState, { name, amount, id: data.name }];
+        });
+      })
+      .catch(() => {
+        console.log('Error occured');
+      });
   };
 
   const onRemoveItem = id => {
-    setIngredients(prevState => {
-      return [...prevState.filter(i => i.id !== id)];
-    });
+    fetch(
+      `https://react-hooks-update-7337b.firebaseio.com/ingredients/${id}.json`,
+      {
+        method: 'DELETE',
+      }
+    )
+      .then(resp =>
+        setIngredients(prevState => {
+          return [...prevState.filter(i => i.id !== id)];
+        })
+      )
+      .catch(() => {
+        console.log('Error occured');
+      });
   };
 
   return (
