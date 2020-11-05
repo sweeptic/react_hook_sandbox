@@ -39,7 +39,7 @@ const Search = React.memo(({ filteredIngredients, setError }) => {
     );
 
     return () => clearTimeout(timer);
-  }, [search, filteredIngredients]);
+  }, [search, filteredIngredients, setError]);
 
   return (
     <section className='search'>

@@ -8,6 +8,7 @@ import ErrorModal from './../UI/ErrorModal';
 function Ingredients() {
   const [ingredients, setIngredients] = useState([]);
   const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const filteredIngredientHandler = useCallback(
     dataList => setIngredients(dataList),
@@ -15,6 +16,7 @@ function Ingredients() {
   );
 
   const onAddIngredientHandler = ({ name, amount }) => {
+    setLoading(true);
     fetch(`https://react-hooks-update-7337b.firebaseio.com/ingredients.json`, {
       method: 'POST',
       body: JSON.stringify({ title: name, amount }),
@@ -22,6 +24,7 @@ function Ingredients() {
     })
       .then(res => res.json())
       .then(data => {
+        setLoading(false);
         setIngredients(prevState => {
           return [...prevState, { name, amount, id: data.name }];
         });
@@ -32,17 +35,19 @@ function Ingredients() {
   };
 
   const onRemoveItem = id => {
+    setLoading(true);
     fetch(
       `https://react-hooks-update-7337b.firebaseio.com/ingredients/${id}.json`,
       {
         method: 'DELETE',
       }
     )
-      .then(resp =>
+      .then(resp => {
+        setLoading(false);
         setIngredients(prevState => {
           return [...prevState.filter(i => i.id !== id)];
-        })
-      )
+        });
+      })
       .catch(err => {
         setError(err.message);
       });
@@ -55,7 +60,10 @@ function Ingredients() {
   return (
     <div className='App'>
       {error && <ErrorModal onClose={clearError}>{error}</ErrorModal>}
-      <IngredientForm addIngredientHandler={onAddIngredientHandler} />
+      <IngredientForm
+        addIngredientHandler={onAddIngredientHandler}
+        loading={loading}
+      />
 
       <section>
         <Search
