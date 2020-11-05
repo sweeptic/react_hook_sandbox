@@ -20,6 +20,9 @@ function Ingredients() {
           });
         }
         setIngredients(dataList);
+      })
+      .catch(() => {
+        console.log('Error occured');
       });
   }, []);
 
@@ -62,7 +65,7 @@ function Ingredients() {
       <IngredientForm addIngredientHandler={onAddIngredientHandler} />
 
       <section>
-        <Search />
+        <Search setIngredients={setIngredients} />
         <IngredientList ingredients={ingredients} onRemoveItem={onRemoveItem} />
       </section>
     </div>
