@@ -69,6 +69,8 @@ function Ingredients() {
         <Search
           filteredIngredients={filteredIngredientHandler}
           setError={setError}
+          setLoading={setLoading}
+          loading={loading}
         />
         <IngredientList ingredients={ingredients} onRemoveItem={onRemoveItem} />
       </section>
