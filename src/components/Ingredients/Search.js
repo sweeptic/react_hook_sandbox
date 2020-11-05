@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Card from '../UI/Card';
 import './Search.css';
 
-const Search = React.memo(({ setIngredients }) => {
+const Search = React.memo(({ filteredIngredients }) => {
   const [search, setSearch] = useState('');
 
   useEffect(() => {
@@ -22,12 +22,12 @@ const Search = React.memo(({ setIngredients }) => {
             amount: data[key].amount,
           });
         }
-        setIngredients(dataList);
+        filteredIngredients(dataList);
       })
       .catch(() => {
         console.log('Error occured');
       });
-  }, [search, setIngredients]);
+  }, [search, filteredIngredients]);
 
   return (
     <section className='search'>
