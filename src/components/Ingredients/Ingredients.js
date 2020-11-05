@@ -3,9 +3,11 @@ import React, { useState, useCallback } from 'react';
 import IngredientForm from './IngredientForm';
 import Search from './Search';
 import IngredientList from './IngredientList';
+import ErrorModal from './../UI/ErrorModal';
 
 function Ingredients() {
   const [ingredients, setIngredients] = useState([]);
+  const [error, setError] = useState(false);
 
   const filteredIngredientHandler = useCallback(
     dataList => setIngredients(dataList),
@@ -24,8 +26,8 @@ function Ingredients() {
           return [...prevState, { name, amount, id: data.name }];
         });
       })
-      .catch(() => {
-        console.log('Error occured');
+      .catch(err => {
+        setError(err.message);
       });
   };
 
@@ -41,17 +43,25 @@ function Ingredients() {
           return [...prevState.filter(i => i.id !== id)];
         })
       )
-      .catch(() => {
-        console.log('Error occured');
+      .catch(err => {
+        setError(err.message);
       });
+  };
+
+  const clearError = () => {
+    setError(null);
   };
 
   return (
     <div className='App'>
+      {error && <ErrorModal onClose={clearError}>{error}</ErrorModal>}
       <IngredientForm addIngredientHandler={onAddIngredientHandler} />
 
       <section>
-        <Search filteredIngredients={filteredIngredientHandler} />
+        <Search
+          filteredIngredients={filteredIngredientHandler}
+          setError={setError}
+        />
         <IngredientList ingredients={ingredients} onRemoveItem={onRemoveItem} />
       </section>
     </div>
