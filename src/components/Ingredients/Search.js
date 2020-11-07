@@ -4,7 +4,7 @@ import './Search.css';
 import useHttp from './../../http/http';
 import ErrorModal from './../UI/ErrorModal';
 
-const Search = React.memo(({ filteredIngredients, dispatchHttp }) => {
+const Search = React.memo(({ filteredIngredients }) => {
   const [search, setSearch] = useState('');
   const refToSearch = useRef();
   const { isLoading, data, error, sendRequest, clear } = useHttp();
@@ -25,17 +25,15 @@ const Search = React.memo(({ filteredIngredients, dispatchHttp }) => {
       search.length === 0 ? 0 : 2000
     );
     return () => clearTimeout(timer);
-  }, [search, filteredIngredients, dispatchHttp, sendRequest]);
+  }, [search, filteredIngredients, sendRequest]);
 
   useEffect(() => {
     if (!isLoading && !error && data) {
       const loadedIngredients = [];
-      console.log(data);
-
       for (const key in data) {
         loadedIngredients.push({
           id: key,
-          name: data[key].title,
+          title: data[key].title,
           amount: data[key].amount,
         });
       }

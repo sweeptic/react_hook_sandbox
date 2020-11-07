@@ -1,40 +1,32 @@
-import React, { useCallback, useReducer } from 'react';
+import React, { useCallback, useReducer, useEffect } from 'react';
 
 import IngredientForm from './IngredientForm';
 import Search from './Search';
 import IngredientList from './IngredientList';
-// import ErrorModal from './../UI/ErrorModal';
+import ErrorModal from './../UI/ErrorModal';
+import useHttp from './../../http/http';
 
 function Ingredients() {
-  // const httpReducer = (currentState, action) => {
-  //   switch (action.type) {
-  //     case 'SEND': {
-  //       return { loading: true, error: null };
-  //     }
-  //     case 'RESPONSE': {
-  //       return { ...currentState, loading: false };
-  //     }
-  //     case 'ERROR': {
-  //       return { loading: false, error: action.errorMessage };
-  //     }
-  //     case 'CLEAR': {
-  //       return { ...currentState, error: null };
-  //     }
-  //     default:
-  //       throw new Error('should not get there');
-  //   }
-  // };
+  const {
+    isLoading,
+    error,
+    data,
+    sendRequest,
+    reqExtra,
+    reqIdentifier,
+    clear,
+  } = useHttp();
 
   const reducer = (currentState, action) => {
     switch (action.type) {
       case 'ADD': {
-        return [...currentState, action.newIngredient];
+        return [...currentState, action.ingredient];
       }
       case 'DELETE': {
-        return [...currentState.filter(i => i.id !== action.deleteId)];
+        return [...currentState.filter(i => i.id !== action.id)];
       }
       case 'SET': {
-        return action.ingredients;
+        return action.ingredient;
       }
       default:
         throw new Error('should not get there');
@@ -43,74 +35,60 @@ function Ingredients() {
 
   const [componentState, dispatch] = useReducer(reducer, []);
 
-  // const [httpState, dispatchHttp] = useReducer(httpReducer, {
-  //   loading: false,
-  //   error: null,
-  // });
-
   const filteredIngredientHandler = useCallback(
     filteredIngredients =>
-      dispatch({ type: 'SET', ingredients: filteredIngredients }),
+      dispatch({ type: 'SET', ingredient: filteredIngredients }),
     []
   );
 
-  const onAddIngredientHandler = ({ name, amount }) => {
-    // setLoading(true);
-    // dispatchHttp({ type: 'SEND' });
-    fetch(`https://react-hooks-update-7337b.firebaseio.com/ingredients.json`, {
-      method: 'POST',
-      body: JSON.stringify({ title: name, amount }),
-      headers: { 'Content-type': 'application/json' },
-    })
-      .then(res => res.json())
-      .then(data => {
-        // dispatchHttp({ type: 'RESPONSE' });
-        // dispatch({
-        //   type: 'ADD',
-        //   newIngredient: { name, amount, id: data.name },
-        // });
-      })
-      .catch(err => {
-        // dispatchHttp({ type: 'ERROR', errorMessage: err.message });
+  useEffect(() => {
+    console.log(componentState);
+  }, [componentState]);
+
+  useEffect(() => {
+    if (!isLoading && !error && reqIdentifier === 'REMOVE_INGREDIENT') {
+      dispatch({ type: 'DELETE', id: reqExtra });
+    } else if (!isLoading && !error && reqIdentifier === 'ADD_INGREDIENT') {
+      dispatch({
+        type: 'ADD',
+        ingredient: { id: data.name, ...reqExtra },
       });
+    }
+  }, [data, error, isLoading, reqIdentifier, reqExtra]);
+
+  const onAddIngredientHandler = ingredient => {
+    sendRequest(
+      //url, method, body, reqExtra, reqIdentifer
+      'https://react-hooks-update-7337b.firebaseio.com/ingredients.json',
+      'POST',
+      JSON.stringify(ingredient),
+      ingredient,
+      'ADD_INGREDIENT'
+    );
   };
 
-  const onRemoveItem = id => {
-    // dispatchHttp({ type: 'SEND' });
-    fetch(
-      `https://react-hooks-update-7337b.firebaseio.com/ingredients/${id}.json`,
-      {
-        method: 'DELETE',
-      }
-    )
-      .then(resp => {
-        // dispatchHttp({ type: 'RESPONSE' });
-        // dispatch({ type: 'DELETE', deleteId: id });
-      })
-      .catch(err => {
-        // dispatchHttp({ type: 'ERROR', errorMessage: err.message });
-      });
+  const onRemoveItem = ingredientId => {
+    //url, method, body, reqExtra, reqIdentifer
+    sendRequest(
+      //url, method, body, reqExtra, reqIdentifer
+      `https://react-hooks-update-7337b.firebaseio.com/ingredients/${ingredientId}.json`,
+      'DELETE',
+      null,
+      ingredientId,
+      'REMOVE_INGREDIENT'
+    );
   };
-
-  // const clearError = () => {
-  //   dispatchHttp({ type: 'CLEAR' });
-  // };
 
   return (
     <div className='App'>
-      {/* {httpState.error && (
-        <ErrorModal onClose={clearError}>{httpState.error}</ErrorModal>
-      )} */}
+      {error && <ErrorModal onClose={clear}>{error}</ErrorModal>}
       <IngredientForm
+        loading={isLoading}
         addIngredientHandler={onAddIngredientHandler}
-        // loading={httpState.loading}
       />
 
       <section>
-        <Search
-          filteredIngredients={filteredIngredientHandler}
-          // dispatchHttp={dispatchHttp}
-        />
+        <Search filteredIngredients={filteredIngredientHandler} />
         <IngredientList
           ingredients={componentState}
           onRemoveItem={onRemoveItem}

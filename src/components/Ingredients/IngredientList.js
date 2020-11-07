@@ -9,7 +9,7 @@ const IngredientList = ({ ingredients, onRemoveItem }) => {
       <ul>
         {ingredients.map(ig => (
           <li key={ig.id} onClick={() => onRemoveItem(ig.id)}>
-            <span>{ig.name}</span>
+            <span>{ig.title}</span>
             <span>{ig.amount}x</span>
           </li>
         ))}
