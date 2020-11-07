@@ -42,10 +42,6 @@ function Ingredients() {
   );
 
   useEffect(() => {
-    console.log(componentState);
-  }, [componentState]);
-
-  useEffect(() => {
     if (!isLoading && !error && reqIdentifier === 'REMOVE_INGREDIENT') {
       dispatch({ type: 'DELETE', id: reqExtra });
     } else if (!isLoading && !error && reqIdentifier === 'ADD_INGREDIENT') {
