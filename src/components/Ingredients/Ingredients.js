@@ -1,4 +1,4 @@
-import React, { useCallback, useReducer, useEffect } from 'react';
+import React, { useCallback, useReducer, useEffect, useMemo } from 'react';
 
 import IngredientForm from './IngredientForm';
 import Search from './Search';
@@ -52,28 +52,44 @@ function Ingredients() {
     }
   }, [data, error, isLoading, reqIdentifier, reqExtra]);
 
-  const onAddIngredientHandler = ingredient => {
-    sendRequest(
-      //url, method, body, reqExtra, reqIdentifer
-      'https://react-hooks-update-7337b.firebaseio.com/ingredients.json',
-      'POST',
-      JSON.stringify(ingredient),
-      ingredient,
-      'ADD_INGREDIENT'
-    );
-  };
+  const onAddIngredientHandler = useCallback(
+    ingredient => {
+      sendRequest(
+        //url, method, body, reqExtra, reqIdentifer
+        'https://react-hooks-update-7337b.firebaseio.com/ingredients.json',
+        'POST',
+        JSON.stringify(ingredient),
+        ingredient,
+        'ADD_INGREDIENT'
+      );
+    },
+    [sendRequest]
+  );
 
-  const onRemoveItem = ingredientId => {
-    //url, method, body, reqExtra, reqIdentifer
-    sendRequest(
+  const onRemoveItem = useCallback(
+    ingredientId => {
       //url, method, body, reqExtra, reqIdentifer
-      `https://react-hooks-update-7337b.firebaseio.com/ingredients/${ingredientId}.json`,
-      'DELETE',
-      null,
-      ingredientId,
-      'REMOVE_INGREDIENT'
+      sendRequest(
+        //url, method, body, reqExtra, reqIdentifer
+        `https://react-hooks-update-7337b.firebaseio.com/ingredients/${ingredientId}.json`,
+        'DELETE',
+        null,
+        ingredientId,
+        'REMOVE_INGREDIENT'
+      );
+    },
+    [sendRequest]
+  );
+
+  const ingredientList = useMemo(() => {
+    //useMemo - save data
+    return (
+      <IngredientList
+        ingredients={componentState}
+        onRemoveItem={onRemoveItem}
+      />
     );
-  };
+  }, [componentState, onRemoveItem]);
 
   return (
     <div className='App'>
@@ -82,13 +98,9 @@ function Ingredients() {
         loading={isLoading}
         addIngredientHandler={onAddIngredientHandler}
       />
-
       <section>
         <Search filteredIngredients={filteredIngredientHandler} />
-        <IngredientList
-          ingredients={componentState}
-          onRemoveItem={onRemoveItem}
-        />
+        {ingredientList}
       </section>
     </div>
   );
