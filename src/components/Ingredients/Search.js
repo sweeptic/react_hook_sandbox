@@ -3,10 +3,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import Card from '../UI/Card';
 import './Search.css';
 
-const Search = React.memo(({ filteredIngredients, setError }) => {
+const Search = React.memo(({ filteredIngredients, dispatchHttp }) => {
   const [search, setSearch] = useState('');
   const refToSearch = useRef();
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const dataList = [];
@@ -16,14 +15,16 @@ const Search = React.memo(({ filteredIngredients, setError }) => {
     const timer = setTimeout(
       () => {
         if (refToSearch.current.value === search) {
-          setLoading(true);
+          dispatchHttp({ type: 'SEND' });
           fetch(
             'https://react-hooks-update-7337b.firebaseio.com/ingredients.json' +
               query
           )
             .then(res => res.json())
             .then(data => {
-              setLoading(false);
+              console.log(data);
+
+              dispatchHttp({ type: 'RESPONSE' });
               for (const key in data) {
                 dataList.push({
                   id: key,
@@ -34,7 +35,7 @@ const Search = React.memo(({ filteredIngredients, setError }) => {
               filteredIngredients(dataList);
             })
             .catch(err => {
-              setError(err.message);
+              dispatchHttp({ type: 'ERROR', errorMessage: err.message });
             });
         }
       },
@@ -42,14 +43,14 @@ const Search = React.memo(({ filteredIngredients, setError }) => {
     );
 
     return () => clearTimeout(timer);
-  }, [search, filteredIngredients, setError, setLoading]);
+  }, [search, filteredIngredients, dispatchHttp]);
 
   return (
     <section className='search'>
       <Card>
         <div className='search-input'>
           <label>Filter by Title</label>
-          {loading && <div>loading...</div>}
+          {/* {dispatchHttp.loading && <div>loading...</div>} */}
           <input
             ref={refToSearch}
             type='text'
