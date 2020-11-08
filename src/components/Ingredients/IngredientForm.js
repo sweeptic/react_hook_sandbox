@@ -5,12 +5,12 @@ import './IngredientForm.css';
 import LoadingIndicator from './../UI/LoadingIndicator';
 
 const IngredientForm = React.memo(({ addIngredientHandler, loading }) => {
-  const [title, setName] = useState('');
+  const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
 
   const submitHandler = event => {
     event.preventDefault();
-    addIngredientHandler({ title, amount });
+    addIngredientHandler({ name, amount });
   };
 
   return (
@@ -22,7 +22,7 @@ const IngredientForm = React.memo(({ addIngredientHandler, loading }) => {
             <input
               type='text'
               id='title'
-              value={title}
+              value={name}
               onChange={e => setName(e.target.value)}
             />
           </div>
