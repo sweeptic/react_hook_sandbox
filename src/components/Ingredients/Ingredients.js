@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useReducer } from 'react';
 
 import IngredientForm from './IngredientForm';
 import Search from './Search';
@@ -6,12 +6,33 @@ import IngredientList from './IngredientList';
 import ErrorModal from './../UI/ErrorModal';
 
 function Ingredients() {
-  const [ingredients, setIngredients] = useState([]);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const ingredientReducer = (currentState, action) => {
+    switch (action.type) {
+      case 'SET': {
+        return action.ingredients;
+      }
+      case 'ADD': {
+        return [...currentState, action.ingredient];
+      }
+      case 'REMOVE': {
+        return [...currentState.filter(i => i.id !== action.removedId)];
+      }
+      default: {
+        console.log('Should not get there');
+      }
+    }
+  };
+
+  const [ingredients, dispatchIngr] = useReducer(ingredientReducer, []);
+
   const filteredIngredientHandler = useCallback(
-    dataList => setIngredients(dataList),
+    dataList => {
+      dispatchIngr({ type: 'SET', ingredients: dataList });
+    },
+
     []
   );
 
@@ -25,8 +46,10 @@ function Ingredients() {
       .then(res => res.json())
       .then(data => {
         setLoading(false);
-        setIngredients(prevState => {
-          return [...prevState, { name, amount, id: data.name }];
+
+        dispatchIngr({
+          type: 'ADD',
+          ingredient: { name, amount, id: data.name },
         });
       })
       .catch(err => {
@@ -44,8 +67,9 @@ function Ingredients() {
     )
       .then(resp => {
         setLoading(false);
-        setIngredients(prevState => {
-          return [...prevState.filter(i => i.id !== id)];
+        dispatchIngr({
+          type: 'REMOVE',
+          removedId: id,
         });
       })
       .catch(err => {
@@ -72,6 +96,7 @@ function Ingredients() {
           setLoading={setLoading}
           loading={loading}
         />
+
         <IngredientList ingredients={ingredients} onRemoveItem={onRemoveItem} />
       </section>
     </div>
