@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Card from '../UI/Card';
 import './Search.css';
 
-const Search = React.memo(({ filteredIngredients, setError }) => {
+const Search = React.memo(({ filteredIngredients, dispatchHttpState }) => {
   const [search, setSearch] = useState('');
   const refToSearch = useRef();
   const [loading, setLoading] = useState(false);
@@ -34,7 +34,10 @@ const Search = React.memo(({ filteredIngredients, setError }) => {
               filteredIngredients(dataList);
             })
             .catch(err => {
-              setError(err.message);
+              dispatchHttpState({
+                type: 'ERROR',
+                error: 'Something went wrong!',
+              });
             });
         }
       },
@@ -42,7 +45,7 @@ const Search = React.memo(({ filteredIngredients, setError }) => {
     );
 
     return () => clearTimeout(timer);
-  }, [search, filteredIngredients, setError, setLoading]);
+  }, [search, filteredIngredients, setLoading, dispatchHttpState]);
 
   return (
     <section className='search'>
