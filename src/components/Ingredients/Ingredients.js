@@ -4,6 +4,7 @@ import IngredientForm from './IngredientForm';
 import Search from './Search';
 import IngredientList from './IngredientList';
 import ErrorModal from './../UI/ErrorModal';
+import { ingredientReducer } from './ingredientReducer';
 
 function Ingredients() {
   const httpStateReducer = (currentState, action) => {
@@ -19,23 +20,6 @@ function Ingredients() {
       }
       case 'CLEAR': {
         return { ...currentState, error: null };
-      }
-      default: {
-        console.log('Should not get there');
-      }
-    }
-  };
-
-  const ingredientReducer = (currentState, action) => {
-    switch (action.type) {
-      case 'SET': {
-        return action.ingredients;
-      }
-      case 'ADD': {
-        return [...currentState, action.ingredient];
-      }
-      case 'REMOVE': {
-        return [...currentState.filter(i => i.id !== action.removedId)];
       }
       default: {
         console.log('Should not get there');
