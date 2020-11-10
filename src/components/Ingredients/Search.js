@@ -1,54 +1,50 @@
 import React, { useEffect, useRef, useState } from 'react';
-
 import Card from '../UI/Card';
 import './Search.css';
+import useHttp from './../http/http-hook';
+import ErrorModal from './../UI/ErrorModal';
 
 const Search = React.memo(({ filteredIngredients, dispatchHttpState }) => {
   const [search, setSearch] = useState('');
   const refToSearch = useRef();
-  const [loading, setLoading] = useState(false);
+  const { requestHandler, data, loading, error, clearError } = useHttp();
 
   useEffect(() => {
     const dataList = [];
+    if (data && !error && !loading) {
+      for (const key in data) {
+        dataList.push({
+          id: key,
+          name: data[key].title,
+          amount: data[key].amount,
+        });
+      }
+      filteredIngredients(dataList);
+    }
+  }, [data, filteredIngredients, error, loading]);
+
+  useEffect(() => {
     const query =
       search.length === 0 ? '' : `?orderBy="title"&equalTo="${search}"`;
 
     const timer = setTimeout(
       () => {
         if (refToSearch.current.value === search) {
-          setLoading(true);
-          fetch(
+          requestHandler(
             'https://react-hooks-update-7337b.firebaseio.com/ingredients.json' +
               query
-          )
-            .then(res => res.json())
-            .then(data => {
-              setLoading(false);
-              for (const key in data) {
-                dataList.push({
-                  id: key,
-                  name: data[key].title,
-                  amount: data[key].amount,
-                });
-              }
-              filteredIngredients(dataList);
-            })
-            .catch(err => {
-              dispatchHttpState({
-                type: 'ERROR',
-                error: 'Something went wrong!',
-              });
-            });
+          );
         }
       },
       search.length === 0 ? 0 : 2000
     );
 
     return () => clearTimeout(timer);
-  }, [search, filteredIngredients, setLoading, dispatchHttpState]);
+  }, [requestHandler, search]);
 
   return (
     <section className='search'>
+      {error && <ErrorModal onClose={clearError}>{error}</ErrorModal>}
       <Card>
         <div className='search-input'>
           <label>Filter by Title</label>
