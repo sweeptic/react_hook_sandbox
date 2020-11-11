@@ -4,7 +4,7 @@ import './Search.css';
 import useHttp from './../http/http-hook';
 import ErrorModal from './../UI/ErrorModal';
 
-const Search = React.memo(({ filteredIngredients, dispatchHttpState }) => {
+const Search = React.memo(({ filteredIngredients }) => {
   const [search, setSearch] = useState('');
   const refToSearch = useRef();
   const { requestHandler, data, loading, error, clearError } = useHttp();
