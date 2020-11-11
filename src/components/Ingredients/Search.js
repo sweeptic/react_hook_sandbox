@@ -25,7 +25,7 @@ const Search = React.memo(({ filteredIngredients, dispatchHttpState }) => {
       }
       filteredIngredients(dataList);
     }
-  }, [data, filteredIngredients, error, loading]);
+  }, [data, filteredIngredients, loading, error]);
 
   useEffect(() => {
     const query =

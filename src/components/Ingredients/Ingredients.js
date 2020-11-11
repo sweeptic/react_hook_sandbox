@@ -83,7 +83,7 @@ function Ingredients() {
 
   return (
     <div className='App'>
-      <LoginInfo />
+      {/* <LoginInfo /> */}
       {error && <ErrorModal onClose={clearError}>{error}</ErrorModal>}
       <IngredientForm
         loading={loading}

@@ -46,7 +46,7 @@ const IngredientForm = React.memo(({ addIngredientHandler, loading }) => {
             {loading && <LoadingIndicator />}
           </div>
         </form>
-        <button onClick={loginHandler}>Login / Logout</button>
+        {/* <button onClick={loginHandler}>Login / Logout</button> */}
       </Card>
     </section>
   );
