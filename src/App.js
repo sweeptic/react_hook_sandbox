@@ -5,7 +5,6 @@ import Ingredients from './components/Ingredients/Ingredients';
 
 const App = props => {
   const authContext = useContext(AuthContext);
-  console.log('render App');
 
   let content = <Auth />;
 
@@ -13,13 +12,7 @@ const App = props => {
     content = <Ingredients />;
   }
 
-  return (
-    <React.Fragment>
-      {/* login: {authContext.isAuth ? 'true' : 'false'} */}
-      {content}
-      {/* <Ingredients />; */}
-    </React.Fragment>
-  );
+  return <React.Fragment>{content}</React.Fragment>;
 };
 
 export default App;

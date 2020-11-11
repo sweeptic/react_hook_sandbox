@@ -10,8 +10,6 @@ const AuthContextProvider = props => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const loginHandler = () => {
-    console.log('call');
-
     setIsAuthenticated(prevValue => !prevValue);
   };
 

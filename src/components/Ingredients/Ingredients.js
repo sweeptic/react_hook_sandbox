@@ -5,7 +5,6 @@ import Search from './Search';
 import IngredientList from './IngredientList';
 import ErrorModal from './../UI/ErrorModal';
 import useHttp from './../http/http-hook';
-import LoginInfo from './LoginInfo';
 
 function Ingredients() {
   const {

@@ -1,22 +1,16 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 
 import Card from '../UI/Card';
 import './IngredientForm.css';
 import LoadingIndicator from './../UI/LoadingIndicator';
-import { AuthContext } from '../../auth-context';
 
 const IngredientForm = React.memo(({ addIngredientHandler, loading }) => {
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
-  const authContext = useContext(AuthContext);
 
   const submitHandler = event => {
     event.preventDefault();
     addIngredientHandler({ name, amount });
-  };
-
-  const loginHandler = () => {
-    authContext.login();
   };
 
   return (

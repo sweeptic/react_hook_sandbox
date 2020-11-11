@@ -1,17 +1,13 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Card from '../UI/Card';
 import './Search.css';
 import useHttp from './../http/http-hook';
 import ErrorModal from './../UI/ErrorModal';
-import { AuthContext } from '../../auth-context';
 
 const Search = React.memo(({ filteredIngredients, dispatchHttpState }) => {
   const [search, setSearch] = useState('');
   const refToSearch = useRef();
   const { requestHandler, data, loading, error, clearError } = useHttp();
-
-  console.log('render filter');
-  const authContext = useContext(AuthContext);
 
   useEffect(() => {
     const dataList = [];
