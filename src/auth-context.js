@@ -1,5 +1,4 @@
-import React from 'react';
-import { createContext, useState } from 'react';
+import React, { createContext, useState } from 'react';
 
 export const AuthContext = createContext({
   isAuth: false,
@@ -7,16 +6,14 @@ export const AuthContext = createContext({
 });
 
 const AuthContextProvider = props => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuth, setIsAuth] = useState(false);
 
   const loginHandler = () => {
-    setIsAuthenticated(prevValue => !prevValue);
+    setIsAuth(true);
   };
 
   return (
-    <AuthContext.Provider
-      value={{ login: loginHandler, isAuth: isAuthenticated }}
-    >
+    <AuthContext.Provider value={{ isAuth: isAuth, login: loginHandler }}>
       {props.children}
     </AuthContext.Provider>
   );
