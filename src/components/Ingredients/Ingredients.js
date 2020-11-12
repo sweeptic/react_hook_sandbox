@@ -60,25 +60,31 @@ function Ingredients() {
     }
   }, [data, error, loading, reqData, typeOfReq]);
 
-  const onAddIngredientHandler = ({ name, amount }) => {
-    requestHandler(
-      // url, { method, body, headers}, typeOfReq
-      'https://react-hooks-update-7337b.firebaseio.com/ingredients.json',
-      'POST',
-      { title: name, amount },
-      'ADD_INGREDIENT'
-    );
-  };
+  const onAddIngredientHandler = useCallback(
+    ({ name, amount }) => {
+      requestHandler(
+        // url, { method, body, headers}, typeOfReq
+        'https://react-hooks-update-7337b.firebaseio.com/ingredients.json',
+        'POST',
+        { title: name, amount },
+        'ADD_INGREDIENT'
+      );
+    },
+    [requestHandler]
+  );
 
-  const onRemoveItem = id => {
-    requestHandler(
-      // url, { method, body, headers}, typeOfReq
-      `https://react-hooks-update-7337b.firebaseio.com/ingredients/${id}.json`,
-      'DELETE',
-      id,
-      'REMOVE_INGREDIENT'
-    );
-  };
+  const onRemoveItem = useCallback(
+    id => {
+      requestHandler(
+        // url, { method, body, headers}, typeOfReq
+        `https://react-hooks-update-7337b.firebaseio.com/ingredients/${id}.json`,
+        'DELETE',
+        id,
+        'REMOVE_INGREDIENT'
+      );
+    },
+    [requestHandler]
+  );
 
   return (
     <div className='App'>
