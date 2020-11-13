@@ -5,7 +5,11 @@ import FavoriteItem from '../components/Favorites/FavoriteItem';
 import './Products.css';
 
 const Favorites = props => {
-  const favoriteProducts = [1, 1, 1];
+  const productList = useSelector(state =>
+    state.shop.products.filter(p => p.isFavorite === true)
+  );
+
+  const favoriteProducts = productList;
 
   let content = <p className='placeholder'>Got no favorites yet!</p>;
   if (favoriteProducts.length > 0) {
