@@ -1,10 +1,15 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { TOGGLE_FAV } from '../redux/action';
 
 import Card from '../UI/Card';
 import './ProductItem.css';
 
 const ProductItem = props => {
-  const toggleFavHandler = () => {};
+  const dispatch = useDispatch();
+  const toggleFavHandler = () => {
+    dispatch({ type: TOGGLE_FAV, favId: props.id });
+  };
 
   return (
     <Card style={{ marginBottom: '1rem' }}>
