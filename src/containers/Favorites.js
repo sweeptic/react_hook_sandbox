@@ -1,14 +1,14 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 
 import FavoriteItem from '../components/Favorites/FavoriteItem';
 import './Products.css';
 
 const Favorites = props => {
-  const list = useSelector(store =>
-    store.productReducer.products.filter(i => i.isFavorite === true)
-  );
-  const favoriteProducts = list;
+  // const list = useSelector(store =>
+  //   store.productReducer.products.filter(i => i.isFavorite === true)
+  // );
+  const favoriteProducts = [1, 2, 3];
 
   let content = <p className='placeholder'>Got no favorites yet!</p>;
   if (favoriteProducts.length > 0) {

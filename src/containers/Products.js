@@ -1,12 +1,12 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 
 import ProductItem from '../components/Products/ProductItem';
 import './Products.css';
 
 const Products = props => {
-  const list = useSelector(store => store.productReducer.products);
-  const productList = list;
+  // const list = useSelector(store => store.productReducer.products);
+  const productList = [1, 2, 3];
 
   return (
     <ul className='products-list'>
