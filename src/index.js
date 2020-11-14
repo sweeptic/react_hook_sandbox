@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 import './index.css';
 import App from './App';
+import StoreContext from './context_api/store-context';
 // import { combineReducers, createStore } from 'redux';
 // import { productReducer } from './components/redux/reducer';
 // import { Provider } from 'react-redux';
@@ -14,9 +15,11 @@ import App from './App';
 
 ReactDOM.render(
   // <Provider store={store}>
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
+  <StoreContext>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </StoreContext>,
   // </Provider>
   document.getElementById('root')
 );
