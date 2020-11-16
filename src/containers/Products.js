@@ -1,15 +1,13 @@
 import React from 'react';
 
 import ProductItem from '../components/Products/ProductItem';
-import { useStore } from '../hooks-store/store';
 import './Products.css';
 
 const Products = props => {
-  const state = useStore()[0];
-
+  const productList = [1, 1, 1];
   return (
     <ul className='products-list'>
-      {state.products.map(prod => (
+      {productList.map(prod => (
         <ProductItem
           key={prod.id}
           id={prod.id}
