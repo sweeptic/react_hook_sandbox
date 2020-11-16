@@ -1,10 +1,16 @@
 import React from 'react';
+import useStore from '../../hook-store/hookstore';
 
 import Card from '../UI/Card';
 import './ProductItem.css';
 
-const ProductItem = props => {
-  const toggleFavHandler = () => {};
+const ProductItem = React.memo(props => {
+  const [, dispatch] = useStore(false, props.id);
+  console.log('render: ', props);
+
+  const toggleFavHandler = () => {
+    dispatch({ type: 'TOGGLE_FAV', id: props.id });
+  };
 
   return (
     <Card style={{ marginBottom: '1rem' }}>
@@ -20,6 +26,6 @@ const ProductItem = props => {
       </div>
     </Card>
   );
-};
+});
 
 export default ProductItem;
