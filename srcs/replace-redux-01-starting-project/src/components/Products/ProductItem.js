@@ -1,20 +1,20 @@
 import React from 'react';
-import useStore from '../../hook-store/hookstore';
+import { useDispatch } from 'react-redux';
 
 import Card from '../UI/Card';
 import './ProductItem.css';
+import { toggleFav } from '../../store/actions/products';
 
-const ProductItem = React.memo(props => {
-  const [, dispatch] = useStore(false, props.id);
-  console.log('render: ', props);
+const ProductItem = props => {
+  const dispatch = useDispatch();
 
   const toggleFavHandler = () => {
-    dispatch({ type: 'TOGGLE_FAV', id: props.id });
+    dispatch(toggleFav(props.id));
   };
 
   return (
     <Card style={{ marginBottom: '1rem' }}>
-      <div className='product-item'>
+      <div className="product-item">
         <h2 className={props.isFav ? 'is-fav' : ''}>{props.title}</h2>
         <p>{props.description}</p>
         <button
@@ -26,6 +26,6 @@ const ProductItem = React.memo(props => {
       </div>
     </Card>
   );
-});
+};
 
 export default ProductItem;
